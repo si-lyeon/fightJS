@@ -6,6 +6,33 @@ canvas.height = 576;
 
 const gravity = 0.2;
 
+let timer = 60;
+let timerId;
+
+function determineWinner({player, enemy, timerId}) {
+  clearTimeout(timerId);
+  document.querySelector("#displayText").style.display = "flex";
+  if (player.health === enemy.health) {
+    document.querySelector("#displayText").innerHTML = "Draw";
+  } else if (player.health > enemy.health) {
+    document.querySelector("#displayText").innerHTML = "Player1 Win";
+  } else if (player.health < enemy.health) {
+    document.querySelector("#displayText").innerHTML = "Player2 Win";
+  }
+}
+
+function decreaseTimer() {
+  if (timer > 0) {
+    timerId = setTimeout(decreaseTimer, 1000);
+    timer--;
+    document.querySelector('#timer').innerHTML = timer;
+  }
+  if (timer === 0) {
+    determineWinner({player, enemy, timerId});
+  }
+}
+decreaseTimer();
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class Sprite {
@@ -232,6 +259,11 @@ function animate() {
       player.health -= 20;
       document.querySelector("#playerHealth").style.width = player.health + "%";
       console.log("enemy attack");
+    }    
+
+    // game end
+    if (enemy.health <= 0 || player.health <= 0) {
+      determineWinner({ player, enemy, timerId });
     }
 }
 
